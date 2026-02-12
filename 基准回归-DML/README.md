@@ -1,17 +1,16 @@
-# DML Model for Benchmark Regression (基准回归 DML 模型)
+# DML Model for Benchmark Regression
 
-本项目是一个基于双重机器学习 (Double Machine Learning, DML) 的因果推断模型代码库。主要用于学术论文中的**基准回归**以及**异质性分析（分组回归）**实验。
+This project is a causal inference model library based on Double Machine Learning (DML). It is primarily designed for benchmark regression​ and heterogeneity analysis (subgroup regression)​ experiments in academic papers.
+## 1. Environment Dependencies
 
-## 1. 环境依赖 (Dependencies)
+This project is developed under **Python 3.7** .
 
-本项目基于 **Python 3.7** 环境开发。
-
-### 1.1 系统要求
+### 1.1 System Requirements
 * Python 3.7
-* R 语言环境 (因为使用了 `rpy2`)
+* R language environment (required for rpy2)
 
-### 1.2 Python 库版本
-为确保实验结果可复现，请严格使用以下版本的依赖库：
+### 1.2 Python Library Versions
+To ensure reproducible experimental results, please strictly adhere to the following dependency versions:
 
 * Numpy == 1.18.1
 * pandas == 1.0.3
@@ -23,58 +22,60 @@
 * pillow == 7.0.0
 * rpy2 == 2.9.4
 
-## 2. 数据准备 (Data Preparation)
+## 2. Data Preparation
 
-项目运行依赖 CSV 格式的数据集。请确保你的数据文件满足以下格式要求：
+The project runs on datasets in CSV format. Please ensure your data files meet the following format requirements:
 
-| 变量类型 | 符号要求 | 说明                       |
+| Variable Type | Column Name | 	Description                       |
 | :--- | :--- |:-------------------------|
-| **被解释变量** | `y` | 必须重命名为 y                 |
-| **核心解释变量** | `d` | 必须重命名为 d                 |
-| **控制变量** | (保持原名) | 变量名称及符号需与论文中 **表1** 保持一致 |
+| **Dependent Variable** | `y` | 	Must be renamed to y                 |
+| **Core Explanatory Variable** | `d` | Must be renamed to d                 |
+| **Control Variables** | (Keep original names) | Variable names and symbols must match Table 1​ in the paper |
 
-## 3. 使用方法 (Usage)
+## 3. Usage Instructions
 
-由于不同实验对应的 CSV 文件数据结构不同，模型的超参数（k值）需要根据数据维度动态调整。请严格按照以下步骤运行：
+Since the data structure of CSV files varies across experiments, model hyperparameters (k value) need to be dynamically adjusted based on data dimensions. Please follow these steps precisely:
 
-### 第一步：设置数据文件
-请在代码编辑器中打开 `empirical_application.py` 文件，找到其中的 `name` 变量，将其值修改为您当前需要实验的 CSV 文件名称。
+### Step 1: Set Data File
+Open the empirical_application.pyfile in your code editor, locate the namevariable, and modify its value to the name of the CSV file for your current experiment.
 
-### 第二步：确定模型参数 (k)
-由于 `k` 值与数据维度相关，初次使用新数据时需手动确定：
+### Step 2: Determine Model Parameters (k)
+Since the **k** value is related to data dimensions, manually determine it when using new data for the first time:
 
-1.  直接运行 `empirical_application.py`。
-2.  程序可能会报错，提示维度不匹配（Dimension Mismatch）。
-3.  **记录报错信息中的数字**，该数字即为基准 `k` 值。
-4.  回到代码中，按照下表逻辑修改以下模型的参数：
+1.Run empirical_application.pydirectly.
 
-* **model_nn1**: 设置为 **报错提示的数字**
-* **model_nn2**: 设置为 **该数字 - 1**
-* **model_knn1**: 设置为 **该数字 - 1**
-* **model_knn2**: 设置为 **该数字 - 1**
+2.The program may throw an error indicating a dimension mismatch.
 
-## 4. 实验参数配置速查表 (Experiment Configurations)
+3.Record the number provided in the error message, which is the baseline kvalue.
 
-为了复现论文中的实验结果，请根据实验类型参考下表设置参数。
+4.Return to the code and modify the parameters for the following models according to the logic below:
 
-### 变量说明
-* **k (Main)**: 对应 `model_nn1` 的 k 参数。
-* **k (Others)**: 对应 `model_nn2`, `model_knn1`, `model_knn2` 的 k 参数。
-* **t_list**: 对应代码中的时间/阈值列表设置。
+* **model_nn1**: Set to the number from the error message
+* **model_nn2**: Set to this number - 1
+* **model_knn1**: Set to this number - 1
+* **model_knn2**: Set to this number - 1
 
-| 实验场景 | k (Main) | k (Others) | t_list 设置代码 |
+## 4. Experiment Configuration Quick Reference
+To reproduce the experimental results from the paper, please refer to the table below to set parameters based on the experiment type.
+
+### Variable Explanation
+* **k (Main)**: Corresponds to the k parameter of model_nn1.
+* **k (Others)**:  Corresponds to the k parameters of model_nn2, model_knn1, model_knn2.
+* **t_list**: Corresponds to the time/threshold list setting in the code.
+
+| Experiment Scenario | k (Main) | k (Others) | t_list Setting Code |
 | :--- | :--- | :--- | :--- |
-| **基准模型** | **303** | 302 | `np.arange(0, 3.75, 0.25)` |
-| **内部异质性** | **303** | 302 | `np.arange(0, 1.69, 0.2)` |
-| **外部异质性 1** | **296** (或 290) | 295 (或 289) | `np.arange(0, 3.75, 0.25)` |
-| **外部异质性 2** | **164** (或 196) | 163 (或 195) | `np.arange(0, 3.75, 0.25)` |
+| **Baseline Model** | **303** | 302 | `np.arange(0, 3.75, 0.25)` |
+| **Internal Heterogeneity** | **303** | 302 | `np.arange(0, 1.69, 0.2)` |
+| **External Heterogeneity 1** | **296** (or 290) | 295 (or 289) | `np.arange(0, 3.75, 0.25)` |
+| **External Heterogeneity 2** | **164** (or 196) | 163 (or 195) | `np.arange(0, 3.75, 0.25)` |
 
-> **注意：** 外部异质性实验中括号内的数字（如 290, 196）代表不同分组数据可能对应的维度。请务必根据"运行方式"中的报错提示选择正确的数值。
+> **Note:​** The numbers in parentheses for external heterogeneity experiments (e.g., 290, 196) represent possible dimensions corresponding to different subgroup data. Always choose the correct value based on the error message as described in the "Usage Instructions".
 
-## 5. 项目结构 (Project Structure)
+## 5. Project Structure
 
 ```text
-├── empirical_application.py   # 主程序入口 (需在此修改 name 和 k 参数)
-├── requirements.txt           # 依赖列表
-├── [数据文件夹]                # 存放 csv 数据文件
-└── README.md                  # 项目说明文档
+├── empirical_application.py   # Main program entry (modify name and k parameters here)
+├── requirements.txt           # Dependency list
+├── [Data Directory]           # Directory for CSV data files
+└── README.md                  # Project documentation
