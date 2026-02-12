@@ -1,0 +1,4 @@
+python test.py --run_multi_d --data_path "非数字企业智能化中介.csv" --t_col "t" --m_col "m" --y_col "y" --categorical_cols "id,year" --estimator kme_dml 
+python test.py --run_multi_d --data_path "数字企业绿色化中介.csv" --t_col "t" --m_col "m" --y_col "y" --categorical_cols "id,year" --estimator kme_dml 
+
+
